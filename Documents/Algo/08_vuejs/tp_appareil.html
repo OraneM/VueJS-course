@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 	<title>Domotique</title>
 </head>
@@ -13,15 +14,23 @@
 			<div class="col-xs-12">
 				<h2>Les Appareils</h2>
 				<ul class="list-group">
-					<li v-for="(a, index) in tableau" class="list-group-item list-group-item-success">
+					<li v-for="(a, index) in tableau" class="list-group-item" v-bind:class="isOn(a) ? 'list-group-item-success' : 'list-group-item-danger'">
 						<h4> {{a.name}} -- {{a.status}}</h4>
 						<button @click="on(a)" class="btn btn-success">ON</button>
                         <button @click="off(a)" class="ml-2 btn btn-danger">OFF</button>
+                        <button @click="enlever(index)" class="ml-2 btn btn-danger"><i class="fa fa-trash"></i></button>
 					</li>
 			    </ul>
 			<br>
 			<button @click="allOn()" class="btn btn-success">ALL ON</button>
 			<button @click="allOff()" class="ml-2 btn btn-danger">ALL OFF</button>
+            <div class="col-6 mt-4">
+                <div class="form-group">
+                  <!-- on relie nom au data store -->
+                  <input  class="form-control" v-model="name" placeholder="Name">
+                </div>
+              <button @click="ajouter()" class="ml-4 btn btn-success"><i class="fa fa-plus"></i></button>
+            </div>
 		</div>
 	</div>
 </div>
@@ -40,24 +49,40 @@ const app = new Vue(
             { name:'PlayStation',status:'allumé'},
         ],
         name: '',
-        status: '',
     },
     methods:
     {
-      ajouter()
-      {
-        let p ={}; // creation d objet
-        p.nom = this.nom;
-        p.prenom= this.prenom;
-        this.nom = '';
-        this.prenom= '';
-        // on ajoute ds le tableau
-        this.tableau.push(p);
-      },
-      enlever(i)
-      {
-        this.tableau.splice(i,1);
-      }
+        on(a) {
+            a.status = 'allumé';
+        },
+        off(a) {
+            a.status = 'éteint';
+        },
+        allOn() {
+            this.tableau.forEach((a, index) => {a.status = 'allumé';});
+        },
+        allOff() {
+            this.tableau.forEach((a, index) => {a.status = 'éteint';});
+        },
+        ajouter() {
+            let a ={}; // creation d objet
+            a.name = this.name;
+            a.status= 'éteint';
+            this.name = '';
+            // on ajoute ds le tableau
+            this.tableau.push(a);
+        },
+        enlever(i) {
+            this.tableau.splice(i,1);
+        },
+        isOn(a='') {
+            let test = true;
+            if (a.status != 'allumé')
+            {
+                test = false;
+            }
+            return test;
+        }
     }
   });
 </script>
