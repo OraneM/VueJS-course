@@ -1,0 +1,25 @@
+<h1>Je veux des majuscules !</h1>
+
+<div id="app">
+  <input v-model="info" />
+  <button @click="afficheMaj()">GO</button>
+  <h2>{{res}}</h2>
+</div>
+
+<!-- le cdn de vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<script>
+  const app = new Vue({
+    el: "#app",
+    data: {
+      info: "Mon mot :)",
+      res: "",
+    },
+    methods: {
+      afficheMaj() {
+        this.res = this.info.toUpperCase();
+      },
+    },
+  });
+</script>
