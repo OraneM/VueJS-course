@@ -18,7 +18,7 @@
 						<h4> {{a.name}} -- {{a.status}}</h4>
 						<button @click="on(a)" class="btn btn-success">ON</button>
                         <button @click="off(a)" class="ml-2 btn btn-danger">OFF</button>
-                        <button @click="enlever(index)" class="ml-2 btn btn-danger"><i class="fa fa-trash"></i></button>
+                        <button @click="enlever(index)" class="ml-2 btn btn-dark"><i class="fa fa-trash"></i></button>
 					</li>
 			    </ul>
 			<br>
@@ -50,19 +50,35 @@ const app = new Vue(
         ],
         name: '',
     },
-    methods:
-    {
+    mounted() {
+        if (localStorage.getItem('tableau'))
+        {
+            try
+            {
+                this.tableau = JSON.parse(localStorage.getItem('tableau'));
+            }
+            catch(e) /* Si qqch ne fonctionne pas c'est que les données sont sans doute corrompues donc on les supprime */
+            {
+                localStorage.removeItem('tableau');
+            }
+        }
+    },
+    methods: {
         on(a) {
             a.status = 'allumé';
+            this.saveTableau();
         },
         off(a) {
             a.status = 'éteint';
+            this.saveTableau();
         },
         allOn() {
             this.tableau.forEach((a, index) => {a.status = 'allumé';});
+            this.saveTableau();
         },
         allOff() {
             this.tableau.forEach((a, index) => {a.status = 'éteint';});
+            this.saveTableau();
         },
         ajouter() {
             let a ={}; // creation d objet
@@ -71,9 +87,11 @@ const app = new Vue(
             this.name = '';
             // on ajoute ds le tableau
             this.tableau.push(a);
+            this.saveTableau();
         },
         enlever(i) {
             this.tableau.splice(i,1);
+            this.saveTableau();
         },
         isOn(a='') {
             let test = true;
@@ -82,6 +100,10 @@ const app = new Vue(
                 test = false;
             }
             return test;
+        },
+        saveTableau() {
+            const parsed = JSON.stringify(this.tableau);
+            localStorage.setItem('tableau', parsed);
         }
     }
   });
