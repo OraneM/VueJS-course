@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Courses</title>
+	<link rel="stylesheet"
+	 href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<!-- container container-fluid  -->
+	<div class="container" id="courses">
+		<div class="row">
+			<div class="offset-3 col-6">
+					<h1> Liste de courses</h1>
+						<br>
+						<div class="row">
+							<div class="col-6">
+								<input class="form-control" v-model="name">
+							</div>
+							<div class="col-2">
+								<button @click="ajouter()" id="btn1" class="btn btn-success">
+									<i class="fa fa-plus"></i>
+								</button>
+							</div>
+						</div>
+				<br>
+					<table  class="table table-striped">
+						<thead>
+							<th>Element</th>
+							<th>Action</th>
+						</thead>
+						<tbody>
+                            <tr v-for="(element, index) in liste" v-bind:class="isDone(element)?'table-danger':''">
+                                <td><strike v-if="isDone(element)">{{element.name}}</strike><span v-else >{{element.name}}</span>
+                                </td>
+                                <td><button @click="done(element)" class="btn btn-primary acheter"><i class="fa fa-check"></i></button>
+                                    <button @click="enlever(index)" class="ml-2 btn btn-danger del"><i class="fa fa-trash"></i></button>
+                                </td>
+                            </tr>
+						</tbody>
+					</table>
+			</div>
+		
+		</div>
+	</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script>
+    const app = new Vue(
+      {
+        el :'#courses',
+        data :
+        {
+            liste : [],
+            name: '',
+        },
+        mounted() {
+            if (localStorage.getItem('liste'))
+            {
+                try
+                {
+                    this.liste = JSON.parse(localStorage.getItem('liste'));
+                }
+                catch(e) /* Si qqch ne fonctionne pas c'est que les données sont sans doute corrompues donc on les supprime */
+                {
+                    localStorage.removeItem('liste');
+                }
+            }
+        },
+        methods: {
+            done(element) {
+                element.done = !element.done;
+                this.saveListe();
+            },
+            ajouter() {
+                let element ={}; // creation d objet
+                element.name = this.name;
+                element.done= false;
+                this.name = '';
+                // on ajoute ds la liste
+                this.liste.push(element);
+                this.saveListe();
+            },
+            enlever(i) {
+                this.liste.splice(i,1);
+                this.saveListe();
+            },
+            isDone(element) {
+                let test = false;
+                if (element.done)
+                {
+                    test = true;
+                }
+                return test;
+            },
+            saveListe() {
+                const parsed = JSON.stringify(this.liste);
+                localStorage.setItem('liste', parsed);
+            }
+        }
+      });
+    </script>
+</body>
+</html>
